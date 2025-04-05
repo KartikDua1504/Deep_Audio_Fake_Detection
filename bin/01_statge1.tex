@@ -1,0 +1,123 @@
+\documentclass{article}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\title{Analysis of Models for Audio Deepfake Detection}
+\author{Kartik Dua}
+\date{05/04/2025}
+
+\begin{document}
+
+\maketitle
+
+\section*{1. Support Vector Machine (SVM) with Handcrafted Features}
+
+\begin{itemize}
+    \item \textbf{Alignment with Project Requirements:}
+    \begin{itemize}
+        \item SVM is a linear classifier effective for binary classification tasks, such as distinguishing between authentic and fake audio samples.
+        \item Utilizes manually extracted features like Mel-Frequency Cepstral Coefficients (MFCCs).
+        \item Suitable for projects with limited computational resources and smaller datasets.
+    \end{itemize}
+    \item \textbf{Computational Efficiency:}
+    \begin{itemize}
+        \item Moderate computational requirements; more complex than Logistic Regression but still manageable on standard hardware.
+        \item Training is relatively straightforward and requires less time compared to deep learning models.
+    \end{itemize}
+    \item \textbf{Generalization Capabilities:}
+    \begin{itemize}
+        \item Performance heavily depends on the quality of handcrafted features.
+        \item May struggle to capture complex patterns inherent in audio deepfakes, leading to limited generalization.
+    \end{itemize}
+    \item \textbf{Interpretability:}
+    \begin{itemize}
+        \item Offers clear insights into the decision-making process by highlighting the importance of each feature.
+        \item Easier to interpret compared to deep learning models.
+    \end{itemize}
+    \item \textbf{Practical Considerations:}
+    \begin{itemize}
+        \item Manual feature extraction is labor-intensive and requires domain expertise.
+        \item Risk of underfitting due to the model's simplicity.
+    \end{itemize}
+\end{itemize}
+
+\noindent
+\textbf{Relevant Research Papers:}
+\begin{itemize}
+    \item Shaaban, O., Yildirim, R., \& Alguttar, A. (2023). \textit{Audio Deepfake Approaches}. Available at: \url{https://www.researchgate.net/publication/356015648_A_Deep_Learning_Framework_for_Audio_Deepfake_Detection}
+    \item Hamza, A., Javed, A. R., Iqbal, F., \& Borghol, R. (2022). \textit{Deepfake Audio Detection via MFCC Features Using Machine Learning}. Available at: \url{https://www.researchgate.net/publication/366489016_Deepfake_Audio_Detection_via_MFCC_features_using_Machine_Learning}
+\end{itemize}
+
+\section*{2. Siamese Convolutional Neural Network (SCNN)}
+
+\begin{itemize}
+    \item \textbf{Alignment with Project Requirements:}
+    \begin{itemize}
+        \item Designed to determine similarity between pairs of inputs, making it adept at distinguishing between authentic and fake audio samples.
+        \item Balances performance and computational efficiency, suitable for moderate-sized datasets.
+    \end{itemize}
+    \item \textbf{Computational Efficiency:}
+    \begin{itemize}
+        \item Moderate complexity allows effective training within resource constraints.
+        \item Requires more resources than SVM but remains feasible.
+    \end{itemize}
+    \item \textbf{Generalization Capabilities:}
+    \begin{itemize}
+        \item Effectively captures complex patterns and generalizes well to unseen data.
+        \item Demonstrated efficacy in audio deepfake detection tasks.
+    \end{itemize}
+    \item \textbf{Interpretability:}
+    \begin{itemize}
+        \item Provides similarity scores, though understanding exact contributing features is more challenging.
+        \item Trade-off between improved performance and interpretability is acceptable.
+    \end{itemize}
+    \item \textbf{Practical Considerations:}
+    \begin{itemize}
+        \item Leverages existing research and methodologies effectively.
+        \item Implementation allows building upon proven techniques and adapting them to specific contexts.
+    \end{itemize}
+\end{itemize}
+
+\noindent
+\textbf{Relevant Research Papers:}
+\begin{itemize}
+    \item Nekadi, R. (2020). \textit{Siamese Network-Based Multi-Modal Deepfake Detection}. University of Missouri-Kansas City. Available at: \url{https://mospace.umsystem.edu/xmlui/handle/10355/74345}
+\end{itemize}
+
+\section*{3. Deep Residual Network (ResNet)}
+
+\begin{itemize}
+    \item \textbf{Alignment with Project Requirements:}
+    \begin{itemize}
+        \item ResNet is a deep learning model capable of capturing intricate patterns in data, making it suitable for complex tasks like audio deepfake detection.
+        \item Well-suited for projects with access to large datasets and substantial computational resources.
+    \end{itemize}
+    \item \textbf{Computational Efficiency:}
+    \begin{itemize}
+        \item High computational requirements due to deep architecture.
+        \item Training requires significant time and powerful hardware, such as GPUs or TPUs.
+    \end{itemize}
+    \item \textbf{Generalization Capabilities:}
+    \begin{itemize}
+        \item High capacity to learn complex representations, reducing the risk of underfitting.
+        \item However, prone to overfitting if not properly regularized, especially with limited data.
+    \end{itemize}
+    \item \textbf{Interpretability:}
+    \begin{itemize}
+        \item Low interpretability; difficult to discern how specific features contribute to predictions.
+        \item Often considered a "black box" model.
+    \end{itemize}
+    \item \textbf{Practical Considerations:}
+    \begin{itemize}
+        \item Implementation complexity is high, requiring expertise in deep learning frameworks.
+        \item Risk of overfitting necessitates careful tuning and validation.
+    \end{itemize}
+\end{itemize}
+
+\noindent
+\textbf{Relevant Research Papers:}
+\begin{itemize}
+    \item Chen, T., Zhang, Z., Wang, Z., \& Li, J. (2017). \textit{ResNet for Audio Deepfake Detection}. Available at: \url{https://arxiv.org/abs/1705.07663}
+\end{itemize}
+
+\end{document}

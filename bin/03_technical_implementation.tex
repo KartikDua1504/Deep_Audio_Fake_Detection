@@ -1,0 +1,92 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath, amssymb, graphicx, hyperref, geometry}
+\geometry{margin=1in}
+\title{Technical Review: Siamese Convolutional Neural Network for Audio Deepfake Detection}
+\author{Kartik Dua}
+\date{05/04/2025}
+
+\begin{document}
+
+\maketitle
+
+\section*{Abstract}
+This document presents a comprehensive technical review of the Siamese Convolutional Neural Network (SCNN) designed and implemented for detecting audio deepfakes using the DECRO dataset. The model architecture incorporates residual connections and squeeze-and-excitation blocks to enable robust feature learning from spectrogram representations of audio data. We elaborate on the theoretical foundation, code implementation decisions, and insights gathered during experimentation.
+
+\section{Introduction}
+The prevalence of deepfake audio calls for reliable speaker verification systems that can distinguish between authentic and manipulated voices. Siamese neural networks have demonstrated effectiveness in verification tasks by learning similarity metrics in an embedding space. Inspired by the original work of Bromley et al.\ (1993) on signature verification \cite{bromley1993signature}, we designed a refined Siamese CNN architecture tailored to audio spectrogram data.
+
+Our approach is also motivated by advancements in computer vision and audio classification, leveraging architectures such as ResNet \cite{he2016deep} and Squeeze-and-Excitation Networks \cite{hu2018squeeze}.
+
+\section{Theoretical Foundation}
+\subsection{Siamese Neural Networks}
+A Siamese network consists of two identical subnetworks that share weights and learn to project input data into a latent space. The network optimizes a contrastive loss function that minimizes the distance between embeddings of similar inputs and maximizes it for dissimilar pairs.
+
+\subsection{Residual Connections}
+Residual connections help mitigate the vanishing gradient problem in deep networks by providing shortcut paths for gradients to flow backward. This facilitates training of deeper models without significant degradation in performance.
+
+\subsection{Squeeze-and-Excitation (SE) Block}
+SE blocks adaptively recalibrate feature maps by explicitly modeling interdependencies between channels. This enhances representational power and helps the model focus on informative features.
+
+\subsection{Contrastive Loss}
+Given a pair of embeddings $(x_1, x_2)$ and a binary label $y$, the contrastive loss is defined as:
+\begin{equation}
+\mathcal{L}(x_1, x_2, y) = (1 - y) \cdot \|x_1 - x_2\|^2 + y \cdot \max(0, m - \|x_1 - x_2\|)^2
+\end{equation}
+where $m$ is the margin that defines the separation boundary for dissimilar pairs.
+
+\section{Implementation Breakdown}
+\subsection{Architecture Design}
+The model begins with an initial convolutional layer followed by three residual blocks of increasing depth. Each residual block contains two convolutional layers with batch normalization and ReLU activations, followed by a shortcut connection.
+
+\begin{itemize}
+\item \textbf{Initial Convolution:} Extracts low-level features from the input spectrogram.
+\item \textbf{Residual Blocks:} Three blocks with channel sizes 32, 64, 128, and 256.
+\item \textbf{SE Block:} Applied after the final residual layer to perform channel-wise attention.
+\item \textbf{Fully Connected Layers:} Final embeddings are 256-dimensional and learned via a two-layer MLP.
+\end{itemize}
+
+\subsection{Code Explanation}
+\begin{itemize}
+\item \texttt{ResidualBlock}: Contains two convolutions and a shortcut connection. Used to stabilize training and encourage reuse of features.
+\item \texttt{SEBlock}: Implements global average pooling followed by two fully connected layers and a sigmoid activation for recalibration.
+\item \texttt{RefinedSiameseCNN}: Combines all modules into a unified architecture. During the first forward pass, it initializes the FC layer dimensions dynamically.
+\item \texttt{ContrastiveLoss}: Calculates pairwise distances and applies the margin-based penalty.
+\item \texttt{train()} and \texttt{validate()}: Functions handle model training and threshold sweeping for optimal decision boundary.
+\end{itemize}
+
+\subsection{Training Configuration}
+\begin{itemize}
+\item Batch Size: 32
+\item Epochs: 40
+\item Optimizer: Adam (learning rate 0.0005)
+\item Margin: 2.0
+\item Input: 1-channel spectrogram (128$\times$128)
+\end{itemize}
+
+\section{Insights and Observations}
+\begin{itemize}
+\item Validation accuracy varied significantly based on the distance threshold. A sweep from 0.2 to 2.1 (step 0.05) was performed.
+\item The SE block improved performance by helping the model focus on speaker-relevant channels.
+\item Dynamic FC layer initialization ensured compatibility with input dimensions without hardcoding.
+\end{itemize}
+
+\section{Conclusion}
+This SCNN implementation demonstrates the effective use of contrastive learning for audio verification tasks. The combination of residual learning and SE attention mechanisms makes the model both deep and context-aware. The methodology provides a robust baseline for future enhancements like transformer-based attention or multimodal fusion.
+
+\begin{thebibliography}{9}
+
+\bibitem{bromley1993signature}
+Bromley, J., Guyon, I., LeCun, Y., Sackinger, E., \& Shah, R. (1993). 
+Signature verification using a ``Siamese'' time delay neural network. In \textit{Neural Information Processing Systems (NIPS)}.
+
+\bibitem{he2016deep}
+He, K., Zhang, X., Ren, S., \& Sun, J. (2016). 
+Deep residual learning for image recognition. In \textit{IEEE Conference on Computer Vision and Pattern Recognition (CVPR)}.
+
+\bibitem{hu2018squeeze}
+Hu, J., Shen, L., \& Sun, G. (2018). 
+Squeeze-and-excitation networks. In \textit{IEEE Conference on Computer Vision and Pattern Recognition (CVPR)}.
+
+\end{thebibliography}
+
+\end{document}

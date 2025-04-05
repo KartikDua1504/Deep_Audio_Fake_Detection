@@ -1,0 +1,110 @@
+\documentclass{article}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage[margin=1in]{geometry}
+
+\title{Comprehensive Implementation and Analysis: Siamese Convolutional Neural Network for Audio Deepfake Detection}
+\author{Kartik Dua}
+\date{05/04/2025}
+
+\begin{document}
+
+\maketitle
+
+\section*{1. Implementation Process}
+
+\subsection*{Challenges Encountered}
+\begin{itemize}
+\item \textbf{Dataset Compatibility:} The DECRO dataset provided audio files with varying durations and sampling rates. These inconsistencies required preprocessing and standardization before feeding them into the model.
+\item \textbf{Model Convergence:} The Siamese CNN architecture initially displayed slow convergence, and achieving a stable validation accuracy required multiple iterations.
+\item \textbf{Threshold Tuning:} Determining the threshold to classify similarity scores into binary labels (real vs. fake) proved non-trivial and involved extensive trial-and-error.
+\item \textbf{Time Constraints:} Implementing the model, performing optimization, and debugging the code within a tight deadline was challenging.
+\end{itemize}
+
+\subsection*{Solutions and Assumptions}
+\begin{itemize}
+\item Preprocessing was standardized using Librosa to extract log-mel spectrograms from audio clips, resampled to a common sampling rate.
+\item Regularization techniques such as dropout and batch normalization were integrated to stabilize training and reduce overfitting.
+\item A threshold sweep between 0.1 and 0.9 was performed to empirically determine the optimal decision boundary. Although a threshold of 1.0 was initially used, the best dev accuracy was observed at a threshold of 0.8, which was then adopted.
+\item Cosine similarity was assumed to effectively capture relational differences between audio embeddings.
+\end{itemize}
+
+\section*{2. Analysis}
+
+\subsection*{Model Selection Justification}
+The Siamese Convolutional Neural Network (SCNN) was chosen due to its ability to compare pairs of data and produce a similarity score. This is highly appropriate for audio deepfake detection, where the authenticity of a sample can be learned through comparison to known real or fake samples. Unlike binary classifiers, this model type is more robust in scenarios where fake types are varied and evolving.
+
+\subsection*{Technical Summary of the Model}
+\begin{itemize}
+\item Each input pair is processed through two identical convolutional neural network branches, ensuring weight sharing.
+\item The CNN branches comprise convolutional layers with ReLU activation, batch normalization, and max pooling.
+\item Outputs from both branches are converted into fixed-dimensional embeddings.
+\item A cosine similarity layer computes the relational distance between embeddings.
+\item The similarity score is then compared against a threshold to determine whether a sample is real or fake.
+\end{itemize}
+
+\subsection*{Performance Evaluation on DECRO Dataset}
+\begin{itemize}
+\item \textbf{Training and Dev Accuracy:} Best dev accuracy of \textbf{63.78\%} was achieved at a similarity threshold of 0.8.
+\item \textbf{Test Set Accuracy:} Final evaluation on the unseen test set yielded \textbf{62.36\%} accuracy.
+\item Accuracy degraded slightly at very low or very high threshold values, validating the model's sensitivity to boundary conditions.
+\end{itemize}
+
+\subsection*{Strengths and Weaknesses}
+\begin{itemize}
+\item \textbf{Strengths:}
+\begin{itemize}
+\item Robust in detecting similarity patterns rather than relying on absolute features.
+\item Suitable for tasks with evolving adversarial inputs, like deepfakes.
+\item Scalable architecture that generalizes well to other biometric verification tasks.
+\end{itemize}
+\item \textbf{Weaknesses:}
+\begin{itemize}
+\item Performance is sensitive to how the threshold is chosen.
+\item Interpretation of cosine similarity lacks transparency compared to decision trees or SVMs.
+\item Needs extensive tuning and validation for domain adaptation.
+\item Training took over 4–5 hours even on a high-end machine equipped with a powerful GPU, indicating high computational demand.
+\end{itemize}
+\end{itemize}
+
+\subsection*{Suggestions for Future Improvements}
+\begin{itemize}
+\item Experiment with alternative distance metrics like Euclidean or Mahalanobis for comparison.
+\item Introduce attention-based pooling to allow the model to weigh time-frequency regions differently.
+\item Replace cosine similarity with a trainable similarity function via contrastive or triplet loss.
+\item Fine-tune the model using transfer learning from ASVspoof or larger audio deepfake datasets.
+\end{itemize}
+
+\section*{3. Reflection}
+
+\subsection*{a. Most Significant Challenges}
+\begin{itemize}
+\item Redesigning the SCNN for audio-based data instead of visual inputs, which required adapting preprocessing and input dimensions.
+\item Building a balanced dataset of anchor-positive-negative audio pairs without introducing bias.
+\item Ensuring consistency in temporal features across samples with varied duration.
+\end{itemize}
+
+\subsection*{b. Real-world v/s Research Dataset Performance}
+\begin{itemize}
+\item Real-world environments contain background noise, microphone variation, and signal distortion—all absent in curated datasets like DECRO.
+\item In production, the model would face adversarial examples not present during training, potentially degrading accuracy.
+\item Latency constraints and memory requirements may hinder deployment on edge devices.
+\end{itemize}
+
+\subsection*{c. Additional Data or Resources Needed}
+\begin{itemize}
+\item Access to diverse audio deepfake datasets spanning languages, speakers, and spoofing techniques.
+\item Use of high-performance GPUs to explore deeper architectures and longer training cycles.
+\item Availability of real-world, labeled fake samples would enhance domain generalization.
+\end{itemize}
+
+\subsection*{d. Production Deployment Strategy}
+\begin{itemize}
+\item Quantize the model for edge deployment while preserving accuracy.
+\item Develop an audio preprocessing module to normalize incoming data in real-time.
+\item Set up a feedback loop to collect user-verification mismatches and use them to retrain the model.
+\item Integrate with an alert system that triggers manual verification when the confidence score is low.
+\end{itemize}
+
+\end{document}
